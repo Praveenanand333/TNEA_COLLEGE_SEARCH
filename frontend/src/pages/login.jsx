@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './login.css'; 
+import axios from 'axios';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -10,22 +11,6 @@ const Login = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  const validatePassword = (password) => {  
-  const minLength = /.{8,}/;  
-  const uppercase = /[A-Z]/;  
-  const lowercase = /[a-z]/;  
-  const number = /[0-9]/;  
-  const specialChar = /[!@#$%^&*(),.?":{}|<>]/;  
-  
-  return (  
-    minLength.test(password) &&  
-    uppercase.test(password) &&  
-    lowercase.test(password) &&  
-    number.test(password) &&  
-    specialChar.test(password)  
-  );  
-};
-
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -37,35 +22,25 @@ const Login = () => {
   setShowPassword((prev) => !prev);
   }
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    const handleLogin = (e) => {
-  e.preventDefault();
-  
-  if (!validatePassword(formData.password)) {
-    alert("Password must be at least 8 characters and include uppercase, lowercase, number, and special character.");
-    return;
-  }
-};
 
+     if (isAdmin) {
+    try {
+      const res = await axios.post('http://localhost:5000/admin/login', {
+        username: formData.email, 
+        password: formData.password,
+      });
 
-
-    
-    if (isAdmin) {
-      if (
-        formData.email === 'admin@example.com' &&
-        formData.password === 'admin123'
-      ) {
-        alert('Admin login successful');
-        navigate('/admin');
-      } else {
-        alert('Invalid admin credentials');
-      }
-    } else {
-      
-      alert('User login successful');
-      navigate('/user');
+      alert(res.data.message);
+      navigate('/admin');
+    } catch (error) {
+      alert(error.response?.data?.message || 'Admin login failed');
     }
+  } else {
+    alert('User login successful');
+    navigate('/user');
+  }
   };
 
   const toggleRole = () => {

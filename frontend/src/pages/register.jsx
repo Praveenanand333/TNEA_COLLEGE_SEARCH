@@ -1,49 +1,72 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './register.css'
-
+import axios from 'axios';
+import './register.css';
 
 const Register = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
-    email: '',
+    username: '',
     password: '',
-    Cutoff:'',
-    Rank:'',
+    confirmPassword: '',
+    cutoff: '',
+    rank: ''
   });
-  const validatePassword = (password) => {  
-  const minLength = /.{8,}/;  
-  const uppercase = /[A-Z]/;  
-  const lowercase = /[a-z]/;  
-  const number = /[0-9]/;  
-  const specialChar = /[!@#$%^&*(),.?":{}|<>]/;  
-  
-  return (  
-    minLength.test(password) &&  
-    uppercase.test(password) &&  
-    lowercase.test(password) &&  
-    number.test(password) &&  
-    specialChar.test(password)  
-  );  
-};
+
+  const validatePassword = (password) => {
+    const minLength = /.{8,}/;
+    const uppercase = /[A-Z]/;
+    const lowercase = /[a-z]/;
+    const number = /[0-9]/;
+    const specialChar = /[!@#$%^&*(),.?":{}|<>]/;
+
+    return (
+      minLength.test(password) &&
+      uppercase.test(password) &&
+      lowercase.test(password) &&
+      number.test(password) &&
+      specialChar.test(password)
+    );
+  };
+
   const handleChange = (e) => {
     setFormData(prev => ({
       ...prev,
-      [e.target.name]: e.target.value,
+      [e.target.name]: e.target.value
     }));
   };
-  const togglePasswordVisibility = () => {
-  setShowPassword((prev) => !prev);
-  }
 
-  const handleSubmit = (e) => {
+  const togglePasswordVisibility = () => {
+    setShowPassword(prev => !prev);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if(formData.password !== formData.confirmPassword){
-        alert("Password did not match")
+
+    if (!validatePassword(formData.password)) {
+      alert("Password must be at least 8 characters and include uppercase, lowercase, number, and special character.");
+      return;
     }
-    alert("Registration successful!");
-    navigate('/');
+
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords do not match.");
+      return;
+    }
+
+    try {
+      const response = await axios.post('http://localhost:5000/register', {
+        username: formData.username,
+        password: formData.password,
+        cutoff: parseFloat(formData.cutoff),
+        rank: parseInt(formData.rank)
+      });
+
+      alert(response.data.message);
+      navigate('/');
+    } catch (error) {
+      alert(error.response?.data?.message || "Registration failed.");
+    }
   };
 
   return (
@@ -54,9 +77,9 @@ const Register = () => {
           Username:
           <input
             type="email"
-            name="email"
+            name="username"
             placeholder="Example@gmail.com"
-            value={formData.email}
+            value={formData.username}
             onChange={handleChange}
             required
           />
@@ -71,55 +94,58 @@ const Register = () => {
               onChange={handleChange}
               required
             />
-          
-           <span onClick={togglePasswordVisibility} className="eye-icon">
-              👁️
-           </span>
-        </div>
+            <span onClick={togglePasswordVisibility} className="eye-icon">👁️</span>
+          </div>
         </label>
         <label className='password-label'>
-        <div className='password-wrapper'>
-        Confirm Password:
+          <div className='password-wrapper'>
+            Confirm Password:
+            <input
+              type={showPassword ? 'text' : 'password'}
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              required
+            />
+            <span onClick={togglePasswordVisibility} className="eye-icon">👁️</span>
+          </div>
+        </label>
+        <label>
+          Cutoff:
           <input
-            type={showPassword ? 'text' : 'password'}
-            name="confirmPassword"
-            value={formData.confirmPassword}
+            type="number"
+            step="0.01"
+            name="cutoff"
+            value={formData.cutoff}
             onChange={handleChange}
             required
           />
-        
-         <span onClick={togglePasswordVisibility} className="eye-icon">
-              👁️
-           </span>
-        </div>
         </label>
         <label>
-            Cutoff:
-            <input
-                type="number"
-                step="0.01"
-                name="Cutoff"
-                value={formData.Cutoff}
-                onChange={handleChange}
-            />
-        </label>
-         <label>
-            Rank:
-            <input
-                type="number"
-                name='Rank'
-                value={formData.Rank}
-                onChange={handleChange}
-            />
+          Rank:
+          <input
+            type="number"
+            name="rank"
+            value={formData.rank}
+            onChange={handleChange}
+            required
+          />
         </label>
 
         <button type="submit">Register</button>
       </form>
-      
-      <p className="switch-text">Already have an account? <span style={{ color: "blue", cursor: "pointer" }} onClick={() => navigate('/')}>Login</span></p>
+
+      <p className="switch-text">
+        Already have an account?{" "}
+        <span
+          style={{ color: "blue", cursor: "pointer" }}
+          onClick={() => navigate('/')}
+        >
+          Login
+        </span>
+      </p>
     </div>
   );
 };
 
 export default Register;
-
