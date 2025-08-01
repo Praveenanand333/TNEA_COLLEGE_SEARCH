@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './register.css';
+const apiUrl=process.env.REACT_APP_API_URL;
 
 const Register = () => {
   const navigate = useNavigate();
@@ -55,7 +56,7 @@ const Register = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:5000/register', {
+      const response = await axios.post(`${apiUrl}/register`, {
         username: formData.username,
         password: formData.password,
         cutoff: parseFloat(formData.cutoff),
