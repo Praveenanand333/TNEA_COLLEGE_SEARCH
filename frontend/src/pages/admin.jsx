@@ -62,7 +62,7 @@ const UploadJson = () => {
     reader.readAsText(file);
 
     try {
-      const res = await axios.post(`${apiUrl}/api/admin/upload`, formData, {
+      const res = await axios.post(`${apiUrl}/api/admin/uploads`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       setUploadResponse(res.data.message || 'Upload successful');
