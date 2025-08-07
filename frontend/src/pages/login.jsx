@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './login.css'; 
 import axios from 'axios';
+const apiUrl=process.env.REACT_APP_API_URL;
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -27,7 +28,7 @@ const Login = () => {
 
      if (isAdmin) {
     try {
-      const res = await axios.post('http://localhost:5000/admin/login', {
+      const res = await axios.post(`${apiUrl}/api/login`, {
         username: formData.email, 
         password: formData.password,
       });
@@ -53,7 +54,7 @@ const Login = () => {
       <h2>{isAdmin ? 'Admin Login' : 'User Login'}</h2>
       <form onSubmit={handleLogin} className="login-form">
         <label>
-          Email:
+          Username:
           <input
             type="email"
             name="email"
