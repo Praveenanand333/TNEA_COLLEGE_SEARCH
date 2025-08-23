@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './login.css'; 
 import axios from 'axios';
+import { EyeIcon,EyeOffIcon } from 'lucide-react';
 const apiUrl=process.env.REACT_APP_API_URL;
 
 const Login = () => {
@@ -28,7 +29,7 @@ const Login = () => {
 
      if (isAdmin) {
     try {
-      const res = await axios.post(`${apiUrl}/api/login`, {
+      const res = await axios.post(`${apiUrl}/api/admin/login`, {
         username: formData.email, 
         password: formData.password,
       });
@@ -39,10 +40,19 @@ const Login = () => {
       alert(error.response?.data?.message || 'Admin login failed');
     }
   } else {
-    alert('User login successful');
-    navigate('/user');
+    try {
+      const res = await axios.post(`${apiUrl}/api/user/login`, {
+        email: formData.email,
+        password: formData.password,
+      });
+
+      alert(res.data.message);
+      navigate('/user');
+    } catch (error) {
+      alert(error.response?.data?.message || 'User login failed');
+    }
   }
-  };
+};
 
   const toggleRole = () => {
     setIsAdmin((prev) => !prev);
@@ -77,7 +87,7 @@ const Login = () => {
             required
            />
            <span onClick={togglePasswordVisibility} className="eye-icon">
-              👁️
+              {showPassword?<EyeIcon size ={20}/>:<EyeOffIcon size={20}/>}
            </span>
           </div>
         </label>

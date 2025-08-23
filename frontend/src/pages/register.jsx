@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './register.css';
+import { EyeIcon,EyeOffIcon } from 'lucide-react';
 const apiUrl=process.env.REACT_APP_API_URL;
 
 const Register = () => {
@@ -56,8 +57,8 @@ const Register = () => {
     }
 
     try {
-      const response = await axios.post(`${apiUrl}/register`, {
-        username: formData.username,
+      const response = await axios.post(`${apiUrl}/api/user/register`, {
+        email: formData.username,
         password: formData.password,
         cutoff: parseFloat(formData.cutoff),
         rank: parseInt(formData.rank)
@@ -67,6 +68,7 @@ const Register = () => {
       navigate('/');
     } catch (error) {
       alert(error.response?.data?.message || "Registration failed.");
+      console.log(error);
     }
   };
 
@@ -95,7 +97,9 @@ const Register = () => {
               onChange={handleChange}
               required
             />
-            <span onClick={togglePasswordVisibility} className="eye-icon">👁️</span>
+            <span onClick={togglePasswordVisibility} className="eye-icon">
+              {showPassword ? <EyeIcon size={20}/>:<EyeOffIcon size={20}/>}
+            </span>
           </div>
         </label>
         <label className='password-label'>
@@ -108,7 +112,9 @@ const Register = () => {
               onChange={handleChange}
               required
             />
-            <span onClick={togglePasswordVisibility} className="eye-icon">👁️</span>
+            <span onClick={togglePasswordVisibility} className="eye-icon">
+              {showPassword ? <EyeIcon size={20}/>:<EyeOffIcon size={20}/>}
+            </span>
           </div>
         </label>
         <label>
