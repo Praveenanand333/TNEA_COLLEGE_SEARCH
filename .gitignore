@@ -40,7 +40,7 @@ Thumbs.db
 # ===== Database (optional if using SQLite etc.) =====
 *.sqlite
 *.db
-*.sql
+
 
 # ===== Uploads/Temp Files =====
 uploads/
